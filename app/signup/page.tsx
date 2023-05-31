@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,40 +15,44 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { signUpFormSchema } from "@/lib/validationSchemas";
+import { signUp } from "@/lib/api";
+import { signIn } from "next-auth/react";
+import Alert from "@/components/Alert";
 
-const signUpFormSchema = z
-  .object({
-    email: z.string().min(1, { message: "Required" }).email(),
-    password: z
-      .string()
-      .min(8, { message: "Password must be 8 characters long" }),
-    confirmPassword: z.string(),
-    firstname: z.string(),
-    lastname: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type SignUpFormValuesType = z.infer<typeof signUpFormSchema>;
+export type SignUpFormValuesType = z.infer<typeof signUpFormSchema>;
 
 function Register() {
+  const [error, setError] = useState("");
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SignUpFormValuesType>({
     resolver: zodResolver(signUpFormSchema),
   });
 
-  const onSubmit: SubmitHandler<SignUpFormValuesType> = (data) =>
-    console.log(data);
+  const onSubmit: SubmitHandler<SignUpFormValuesType> = async (data) => {
+    try {
+      await signUp(data);
+      error && setError("");
+      await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        callbackUrl: "/",
+      });
+      reset();
+    } catch (e: any) {
+      console.error(e);
+      setError(e.message);
+    }
+  };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-screen h-screen grid place-items-center"
+      className="w-screen h-screen flex flex-col justify-center items-center"
     >
       <Card className="w-4/5 sm:w-3/5 md:w-2/5 lg:w-1/3">
         <CardHeader>
@@ -125,6 +130,14 @@ function Register() {
           </span>
         </CardFooter>
       </Card>
+      {error && (
+        <Alert
+          className="w-4/5 sm:w-3/5 md:w-2/5 lg:w-1/3 mt-4"
+          variant="destructive"
+          title="Error"
+          description={error}
+        />
+      )}
     </form>
   );
 }

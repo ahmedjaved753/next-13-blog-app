@@ -15,29 +15,42 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
-const loginFormSchema = z.object({
-  email: z.string().min(1, { message: "Required" }).email(),
-  password: z
-    .string()
-    .min(8, { message: "Password must be 8 characters long" }),
-});
+import { loginFormSchema } from "@/lib/validationSchemas";
+import { signIn } from "next-auth/react";
+import Alert from "@/components/Alert";
 
 type LoginFormValuesType = z.infer<typeof loginFormSchema>;
 
-function Login() {
+const ERROR_MESSAGE = "Please check your credentials and try again.";
+const CREDENTIALS_SIGNIN_ERROR = "CredentialsSignin";
+
+function Login({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<LoginFormValuesType>({ resolver: zodResolver(loginFormSchema) });
 
-  const onSubmit: SubmitHandler<LoginFormValuesType> = (data) =>
-    console.log(data);
+  const onSubmit: SubmitHandler<LoginFormValuesType> = async (data) => {
+    try {
+      await signIn("credentials", {
+        ...data,
+        callbackUrl: "/",
+      });
+      reset();
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-screen h-screen grid place-items-center"
+      className="w-screen h-screen flex flex-col justify-center items-center"
     >
       <Card className="w-4/5 sm:w-3/5 md:w-2/5 lg:w-1/3">
         <CardHeader>
@@ -65,6 +78,7 @@ function Login() {
                 id="password"
                 placeholder="Pasword"
                 {...register("password")}
+                type="password"
               />
               {errors.password && (
                 <p className="text-xs text-red-500">
@@ -84,6 +98,14 @@ function Login() {
           </span>
         </CardFooter>
       </Card>
+      {searchParams.error === CREDENTIALS_SIGNIN_ERROR && (
+        <Alert
+          className="w-4/5 sm:w-3/5 md:w-2/5 lg:w-1/3 mt-4"
+          variant="destructive"
+          title="Error"
+          description={ERROR_MESSAGE}
+        />
+      )}
     </form>
   );
 }
