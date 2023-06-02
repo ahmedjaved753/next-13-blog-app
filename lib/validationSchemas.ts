@@ -21,3 +21,12 @@ export const loginFormSchema = z.object({
     .string()
     .min(8, { message: "Password must be 8 characters long" }),
 });
+
+export const blogFormSchema = z.object({
+  title: z.string().min(1, { message: "Required" }),
+  content: z.string().min(1, { message: "Required" }),
+});
+
+export const updateBlogSchems = blogFormSchema.extend({
+  id: z.string(),
+});
