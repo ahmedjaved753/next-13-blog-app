@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json(
-    { message: "Blog published successfully" },
+    { message: "Blog Addeded successfully" },
     { status: 201 }
   );
 }

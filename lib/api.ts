@@ -13,9 +13,9 @@ export const signUp = async (singUpData: SignUpFormValuesType) => {
   });
 };
 
-export const publishBlog = async (blogData: BlogFormValuesType) => {
+export const addBlog = async (blogData: BlogFormValuesType) => {
   return await fetcher({
-    url: "/api/publish-blog",
+    url: "/api/add-blog",
     method: "POST",
     body: blogData,
   });
