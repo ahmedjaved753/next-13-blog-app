@@ -2,7 +2,7 @@ import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 import Link from "next/link";
 
 const NAVBAR_DATA = [
-  { name: "Add Blog", path: "/publish-blog" },
+  { name: "Add Blog", path: "/add-blog" },
   {
     name: "My Blogs",
     path: "/blogs",

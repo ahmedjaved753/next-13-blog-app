@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import EmptyBlogs from "@/components/EmptyBlogs";
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -14,6 +15,8 @@ export default async function Page() {
       authorId: session.user.id,
     },
   });
+
+  if (true) return <EmptyBlogs />;
 
   return (
     <div className="flex flex-col items-center w-full space-x-100 mt-10">

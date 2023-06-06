@@ -8,8 +8,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { blogFormSchema } from "@/lib/validationSchemas";
-import { publishBlog, updateBlog } from "@/lib/api";
+import { addBlog, updateBlog } from "@/lib/api";
 import { useToast } from "./ui/use-toast";
+import { useRouter } from "next/navigation";
 
 export type BlogFormValuesType = z.infer<typeof blogFormSchema>;
 
@@ -22,6 +23,7 @@ type BlogFormPropsType = {
 };
 
 function BlogForm({ defaultValues }: BlogFormPropsType) {
+  const router = useRouter();
   const { toast } = useToast();
   const {
     register,
@@ -33,19 +35,20 @@ function BlogForm({ defaultValues }: BlogFormPropsType) {
     ...(defaultValues && { defaultValues }),
   });
 
-  const publish = defaultValues ? false : true;
+  const add = defaultValues ? false : true;
 
   const onSubmit: SubmitHandler<BlogFormValuesType> = async (data) => {
     try {
-      await (publish
-        ? publishBlog(data)
+      await (add
+        ? addBlog(data)
         : updateBlog({ ...data, id: defaultValues?.id as string }));
       toast({
-        description: publish
-          ? "Blog Published Successfully"
+        description: add
+          ? "Blog Added Successfully"
           : "Blog Updated Successfully",
       });
       !defaultValues && reset();
+      add ? router.push("/blogs") : router.push(`/blogs/${defaultValues?.id}`);
     } catch (e: any) {
       console.error(e);
     }
@@ -54,7 +57,7 @@ function BlogForm({ defaultValues }: BlogFormPropsType) {
     <div className="flex flex-col justify-center items-center place-content-center w-screen h-screen">
       <div className="w-5/6 md:w-4/6 lg:w-3/6">
         <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 mb-2">
-          Publish Blog
+          Add Blog
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Label htmlFor="title">Email</Label>
@@ -67,7 +70,7 @@ function BlogForm({ defaultValues }: BlogFormPropsType) {
             {...register("content")}
           />
           <Button className="mt-2 w-full" type="submit">
-            Publish Blog
+            Add Blog
           </Button>
         </form>
       </div>
