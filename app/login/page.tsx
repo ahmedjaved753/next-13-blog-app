@@ -18,6 +18,7 @@ import * as z from "zod";
 import { loginFormSchema } from "@/lib/validationSchemas";
 import { signIn } from "next-auth/react";
 import Alert from "@/components/Alert";
+import InputError from "@/components/InputError";
 
 type LoginFormValuesType = z.infer<typeof loginFormSchema>;
 
@@ -69,7 +70,7 @@ function Login({
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-xs text-red-500">{errors.email?.message}</p>
+                <InputError errorMessage={errors.email?.message as string} />
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
@@ -81,9 +82,7 @@ function Login({
                 type="password"
               />
               {errors.password && (
-                <p className="text-xs text-red-500">
-                  {errors.password?.message}
-                </p>
+                <InputError errorMessage={errors.password?.message as string} />
               )}
             </div>
           </div>

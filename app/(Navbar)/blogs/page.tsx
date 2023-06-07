@@ -16,7 +16,7 @@ export default async function Page() {
     },
   });
 
-  if (true) return <EmptyBlogs />;
+  if (!blogs.length) return <EmptyBlogs />;
 
   return (
     <div className="flex flex-col items-center w-full space-x-100 mt-10">

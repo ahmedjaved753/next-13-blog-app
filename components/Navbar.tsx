@@ -1,5 +1,6 @@
 import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 import Link from "next/link";
+import LogoutButton from "./LogoutButton";
 
 const NAVBAR_DATA = [
   { name: "Add Blog", path: "/add-blog" },
@@ -19,6 +20,9 @@ export function Navbar() {
           </MenubarTrigger>
         </MenubarMenu>
       ))}
+      <MenubarMenu>
+        <LogoutButton />
+      </MenubarMenu>
     </Menubar>
   );
 }
