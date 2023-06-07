@@ -11,6 +11,7 @@ import { blogFormSchema } from "@/lib/validationSchemas";
 import { addBlog, updateBlog } from "@/lib/api";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
+import InputError from "./InputError";
 
 export type BlogFormValuesType = z.infer<typeof blogFormSchema>;
 
@@ -60,15 +61,25 @@ function BlogForm({ defaultValues }: BlogFormPropsType) {
           Add Blog
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Label htmlFor="title">Email</Label>
-          <Input id="title" placeholder="Title" {...register("title")} />
-          <Label htmlFor="content">Description</Label>
-          <Textarea
-            id="content"
-            placeholder="Type your message here."
-            rows={20}
-            {...register("content")}
-          />
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="title">Email</Label>
+            <Input id="title" placeholder="Title" {...register("title")} />
+            {errors.title && (
+              <InputError errorMessage={errors.title?.message as string} />
+            )}
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="content">Description</Label>
+            <Textarea
+              id="content"
+              placeholder="Type your message here."
+              rows={20}
+              {...register("content")}
+            />
+            {errors.content && (
+              <InputError errorMessage={errors.content?.message as string} />
+            )}
+          </div>
           <Button className="mt-2 w-full" type="submit">
             Add Blog
           </Button>

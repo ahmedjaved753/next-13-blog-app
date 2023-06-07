@@ -19,6 +19,7 @@ import { signUpFormSchema } from "@/lib/validationSchemas";
 import { signUp } from "@/lib/api";
 import { signIn } from "next-auth/react";
 import Alert from "@/components/Alert";
+import InputError from "@/components/InputError";
 
 export type SignUpFormValuesType = z.infer<typeof signUpFormSchema>;
 
@@ -71,7 +72,7 @@ function Register() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-xs text-red-500">{errors.email?.message}</p>
+                <InputError errorMessage={errors.email?.message as string} />
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
@@ -83,9 +84,7 @@ function Register() {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-xs text-red-500">
-                  {errors.password?.message}
-                </p>
+                <InputError errorMessage={errors.password?.message as string} />
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
@@ -97,9 +96,9 @@ function Register() {
                 {...register("confirmPassword")}
               />
               {errors.confirmPassword && (
-                <p className="text-xs text-red-500">
-                  {errors.confirmPassword?.message}
-                </p>
+                <InputError
+                  errorMessage={errors.confirmPassword?.message as string}
+                />
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
